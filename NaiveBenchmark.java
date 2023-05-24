@@ -61,10 +61,10 @@ public class NaiveBenchmark {
     System.out.printf("%-20s\n", "Average Time (HH:MM:SS:ms:ns)");
 
     printResults("Arrays.sort", arr, Arrays::sort);
-    printResults("Merge Sort", arr, SortingAlgorithm::mergeSort);
+    printResults("Bubble Sort", arr, SortingAlgorithm::bubbleSort);
     printResults("Insertion Sort", arr, SortingAlgorithm::insertionSort);
     printResults("Selection Sort", arr, SortingAlgorithm::selectionSort);
-    printResults("Bubble Sort", arr, SortingAlgorithm::bubbleSort);
+    printResults("Quick Sort", arr, SortingAlgorithm::quickSort);
 
     sc.close();
   }
@@ -72,101 +72,76 @@ public class NaiveBenchmark {
 
 class SortingAlgorithm {
 
-  public static void bubbleSort(int[] arr) {
-    int n = arr.length;
-    int temp = 0;
+  public static void bubbleSort(int[] A) {
+    int n = A.length;
 
-    for (int i = 0; i < n; i++) {
-      for (int j = 1; j < (n - i); j++) {
-
-        if (arr[j - 1] > arr[j]) {
-          // swap elements
-          temp = arr[j - 1];
-          arr[j - 1] = arr[j];
-          arr[j] = temp;
+    for (int i = 0; i < n; i++)
+      for (int j = n - 1; j > i; j--)
+        if (A[j] < A[j - 1]) {
+          // swap(A[j], A[j - 1])
+          int temp = A[j];
+          A[j] = A[j - 1];
+          A[j - 1] = temp;
         }
-
-      }
-    }
   }
 
-  public static void insertionSort(int array[]) {
-    int n = array.length;
-    for (int j = 1; j < n; j++) {
-      int key = array[j];
-      int i = j - 1;
-      while ((i > -1) && (array[i] > key)) {
-        array[i + 1] = array[i];
-        i--;
+  public static void insertionSort(int A[]) {
+    int n = A.length;
+    for (int i = 1; i < n; i++) {
+      int temp = A[i];
+      int j = i - 1;
+
+      while (j >= 0 && temp < A[j]) {
+        A[j + 1] = A[j];
+        j--;
       }
-      array[i + 1] = key;
+      A[j + 1] = temp;
     }
   }
 
   // selection sort
-  public static void selectionSort(int[] arr) {
-    for (int i = 0; i < arr.length - 1; i++) {
-      int index = i;
-      for (int j = i + 1; j < arr.length; j++) {
-        if (arr[j] < arr[index]) {
-          index = j;// searching for lowest index
-        }
-      }
-      int smallerNumber = arr[index];
-      arr[index] = arr[i];
-      arr[i] = smallerNumber;
+  public static void selectionSort(int[] A) {
+    int n = A.length;
+    for (int i = 0; i < n - 1; i++) {
+      int small = i;
+      for (int j = i + 1; j < n; j++)
+        if (A[j] < A[small])
+          small = j;
+
+      // swap(A[i], A[small])
+      int temp = A[i];
+      A[i] = A[small];
+      A[small] = temp;
     }
   }
 
-  public static void mergeSort(int[] array) {
-    mergeSort(array, 0, array.length - 1);
+  public static void quickSort(int[] arr) {
+    quickSort(arr, 0, arr.length - 1);
   }
 
-  public static void mergeSort(int[] array, int low, int high) {
-    if (high <= low)
-      return;
+  public static void quickSort(int[] arr, int left, int right) {
+    int i = left, j = right;
+    int pivot = arr[(left + right) / 2];
 
-    int mid = (low + high) / 2;
-    mergeSort(array, low, mid);
-    mergeSort(array, mid + 1, high);
-    merge(array, low, mid, high);
-  }
-
-  private static void merge(int[] array, int low, int mid, int high) {
-    // Creating temporary subarrays
-    int leftArray[] = new int[mid - low + 1];
-    int rightArray[] = new int[high - mid];
-
-    // Copying our subarrays into temporaries
-    for (int i = 0; i < leftArray.length; i++)
-      leftArray[i] = array[low + i];
-    for (int i = 0; i < rightArray.length; i++)
-      rightArray[i] = array[mid + i + 1];
-
-    // Iterators containing current index of temp subarrays
-    int leftIndex = 0;
-    int rightIndex = 0;
-
-    // Copying from leftArray and rightArray back into array
-    for (int i = low; i < high + 1; i++) {
-      // If there are still uncopied elements in R and L, copy minimum of the two
-      if (leftIndex < leftArray.length && rightIndex < rightArray.length) {
-        if (leftArray[leftIndex] < rightArray[rightIndex]) {
-          array[i] = leftArray[leftIndex];
-          leftIndex++;
-        } else {
-          array[i] = rightArray[rightIndex];
-          rightIndex++;
-        }
-      } else if (leftIndex < leftArray.length) {
-        // If all elements have been copied from rightArray, copy rest of leftArray
-        array[i] = leftArray[leftIndex];
-        leftIndex++;
-      } else if (rightIndex < rightArray.length) {
-        // If all elements have been copied from leftArray, copy rest of rightArray
-        array[i] = rightArray[rightIndex];
-        rightIndex++;
+    while (i <= j) {
+      while (arr[i] < pivot)
+        i++;
+      while (arr[j] > pivot)
+        j--;
+      if (i <= j) {
+        // swap(A[i], A[j])
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+        i++;
+        j--;
       }
     }
+
+    if (left < j)
+      quickSort(arr, left, j);
+    if (i < right)
+      quickSort(arr, i, right);
+
   }
 }

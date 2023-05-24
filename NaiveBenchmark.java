@@ -60,11 +60,11 @@ public class NaiveBenchmark {
       System.out.printf("%-20s ", "Iteration " + (i + 1));
     System.out.printf("%-20s\n", "Average Time (HH:MM:SS:ms:ns)");
 
-    printResults("Arrays.sort", arr, Arrays::sort);
     printResults("Bubble Sort", arr, SortingAlgorithm::bubbleSort);
     printResults("Insertion Sort", arr, SortingAlgorithm::insertionSort);
     printResults("Selection Sort", arr, SortingAlgorithm::selectionSort);
     printResults("Quick Sort", arr, SortingAlgorithm::quickSort);
+    printResults("Arrays.sort", arr, Arrays::sort);
 
     sc.close();
   }

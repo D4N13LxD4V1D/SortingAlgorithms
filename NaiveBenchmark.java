@@ -18,10 +18,6 @@ public class NaiveBenchmark {
   }
 
   private static Duration getTimedResults(int[] arr, Consumer<int[]> sortFunction) {
-    // warm up to avoid JVM optimizations
-    for (int i = 0; i < 10; i++)
-      sortFunction.accept(Arrays.copyOf(arr, arr.length));
-
     long start = System.nanoTime();
     sortFunction.accept(Arrays.copyOf(arr, arr.length));
     long end = System.nanoTime();

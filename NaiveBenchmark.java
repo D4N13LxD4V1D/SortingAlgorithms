@@ -26,13 +26,16 @@ public class NaiveBenchmark {
 
   private static void printResults(String sortName, int[] arr, Consumer<int[]> sortFunction) {
     System.out.printf("%-20s ", sortName);
+    System.err.printf("%-20s ", sortName);
     Duration totalDuration = Duration.ZERO;
     for (int i = 0; i < 20; i++) {
       Duration duration = getTimedResults(arr, sortFunction);
       System.out.printf("%-20s ", formatDuration(duration));
+      System.err.printf("%-20s ", formatDuration(duration));
       totalDuration = totalDuration.plus(duration);
     }
     System.out.printf("%-20s\n", formatDuration(totalDuration.dividedBy(20)));
+    System.err.printf("%-20s\n", formatDuration(totalDuration.dividedBy(20)));
   }
 
   public static void main(String[] args) throws FileNotFoundException {
@@ -55,6 +58,11 @@ public class NaiveBenchmark {
     for (int i = 0; i < 20; i++)
       System.out.printf("%-20s ", "Iteration " + (i + 1));
     System.out.printf("%-20s\n", "Average Time (HH:MM:SS:ms:ns)");
+
+    System.err.printf("%-20s ", "Sorting Algorithm");
+    for (int i = 0; i < 20; i++)
+      System.err.printf("%-20s ", "Iteration " + (i + 1));
+    System.err.printf("%-20s\n", "Average Time (HH:MM:SS:ms:ns)");
 
     printResults("Bubble Sort", arr, SortingAlgorithm::bubbleSort);
     printResults("Insertion Sort", arr, SortingAlgorithm::insertionSort);

@@ -48,12 +48,40 @@ public class NaiveBenchmark {
       list.add(Integer.parseInt(sc.nextLine()));
     }
 
+    sc.close();
+
     int[] arr = new int[list.size()];
     for (int i = 0; i < list.size(); i++) {
       arr[i] = list.get(i);
     }
 
+    int[] arr1k = Arrays.copyOf(arr, 1000);
+    int[] arr10k = Arrays.copyOf(arr, 10000);
+    int[] arr50k = Arrays.copyOf(arr, 50000);
+    int[] arr100k = Arrays.copyOf(arr, 100000);
+    int[] arr500k = Arrays.copyOf(arr, 500000);
+
+    System.out.println("Sorting 1000 elements");
+    printResultsForArray(arr1k);
+
+    System.out.println("Sorting 10000 elements");
+    printResultsForArray(arr10k);
+
+    System.out.println("Sorting 50000 elements");
+    printResultsForArray(arr50k);
+
+    System.out.println("Sorting 100000 elements");
+    printResultsForArray(arr100k);
+
+    System.out.println("Sorting 500000 elements");
+    printResultsForArray(arr500k);
+
+  }
+
+  static void printResultsForArray(int[] arr) {
     // pretty print results in a table
+    System.out.println("============================================================");
+    System.err.println("============================================================");
     System.out.printf("%-20s ", "Sorting Algorithm");
     for (int i = 0; i < 20; i++)
       System.out.printf("%-20s ", "Iteration " + (i + 1));
@@ -70,7 +98,10 @@ public class NaiveBenchmark {
     printResults("Quick Sort", arr, SortingAlgorithm::quickSort);
     printResults("Arrays.sort", arr, Arrays::sort);
 
-    sc.close();
+    System.out.println("============================================================");
+    System.err.println("============================================================");
+    System.out.println();
+    System.err.println();
   }
 }
 

@@ -11,33 +11,6 @@ import java.util.function.Consumer;
 
 public class NaiveBenchmark {
 
-  // format duration to HH:MM:SS:ms:ns
-  private static String formatDuration(Duration duration) {
-    return String.format("%02d:%02d:%02d:%03d:%06d", duration.toHoursPart(), duration.toMinutesPart(),
-        duration.toSecondsPart(), duration.toMillisPart(), duration.toNanosPart() - duration.toMillisPart() * 1000000);
-  }
-
-  private static Duration getTimedResults(int[] arr, Consumer<int[]> sortFunction) {
-    long start = System.nanoTime();
-    sortFunction.accept(Arrays.copyOf(arr, arr.length));
-    long end = System.nanoTime();
-    return Duration.ofNanos(end - start);
-  }
-
-  private static void printResults(String sortName, int[] arr, Consumer<int[]> sortFunction) {
-    System.out.printf("%-20s ", sortName);
-    System.err.printf("%-20s ", sortName);
-    Duration totalDuration = Duration.ZERO;
-    for (int i = 0; i < 20; i++) {
-      Duration duration = getTimedResults(arr, sortFunction);
-      System.out.printf("%-20s ", formatDuration(duration));
-      System.err.printf("%-20s ", formatDuration(duration));
-      totalDuration = totalDuration.plus(duration);
-    }
-    System.out.printf("%-20s\n", formatDuration(totalDuration.dividedBy(20)));
-    System.err.printf("%-20s\n", formatDuration(totalDuration.dividedBy(20)));
-  }
-
   public static void main(String[] args) throws FileNotFoundException {
 
     File file = new File("dataset.txt");
@@ -80,7 +53,6 @@ public class NaiveBenchmark {
     System.out.println("Sorting 500k elements");
     System.err.println("Sorting 500k elements");
     printResultsForArray(arr500k);
-
   }
 
   static void printResultsForArray(int[] arr) {
@@ -112,6 +84,34 @@ public class NaiveBenchmark {
     System.out.println();
     System.err.println();
   }
+
+  private static void printResults(String sortName, int[] arr, Consumer<int[]> sortFunction) {
+    System.out.printf("%-20s ", sortName);
+    System.err.printf("%-20s ", sortName);
+    Duration totalDuration = Duration.ZERO;
+    for (int i = 0; i < 20; i++) {
+      Duration duration = getTimedResults(arr, sortFunction);
+      System.out.printf("%-20s ", formatDuration(duration));
+      System.err.printf("%-20s ", formatDuration(duration));
+      totalDuration = totalDuration.plus(duration);
+    }
+    System.out.printf("%-20s\n", formatDuration(totalDuration.dividedBy(20)));
+    System.err.printf("%-20s\n", formatDuration(totalDuration.dividedBy(20)));
+  }
+
+  private static Duration getTimedResults(int[] arr, Consumer<int[]> sortFunction) {
+    long start = System.nanoTime();
+    sortFunction.accept(Arrays.copyOf(arr, arr.length));
+    long end = System.nanoTime();
+    return Duration.ofNanos(end - start);
+  }
+
+  // format duration to HH:MM:SS:ms:ns
+  private static String formatDuration(Duration duration) {
+    return String.format("%02d:%02d:%02d:%03d:%06d", duration.toHoursPart(), duration.toMinutesPart(),
+        duration.toSecondsPart(), duration.toMillisPart(), duration.toNanosPart() - duration.toMillisPart() * 1000000);
+  }
+
 }
 
 class SortingAlgorithm {

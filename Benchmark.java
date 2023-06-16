@@ -1,22 +1,19 @@
 import java.io.File;
-import java.io.FileNotFoundException;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import java.util.Scanner;
 import java.util.function.Consumer;
 
 public class Benchmark {
 
-  public static void main(String[] args) throws FileNotFoundException {
+  public static void main(String[] args) throws Exception {
 
     File file = new File("dataset.txt");
     Scanner sc = new Scanner(file);
 
-    List<Integer> list = new ArrayList<Integer>();
+    ArrayList<Integer> list = new ArrayList<Integer>();
     while (sc.hasNextLine()) {
       list.add(Integer.parseInt(sc.nextLine()));
     }
@@ -28,60 +25,77 @@ public class Benchmark {
       arr[i] = list.get(i);
     }
 
+    boolean printInTimeFormat = true; // set to false to print in nanoseconds
+
+    int[] arrCopy;
     for (int i = 1; i < 35 + 1; i++) {
       System.out.println("Sorting " + i * 100 + " elements");
-      int[] arrCopy = Arrays.copyOf(arr, i * 250);
-      printResultsForArray(arrCopy);
+      arrCopy = Arrays.copyOf(arr, i * 250);
+      printResultsForArray(arrCopy, printInTimeFormat);
     }
 
     System.out.println("Sorting " + 1000000 + " elements");
-    int[] arrCopy = Arrays.copyOf(arr, 1000000);
-    printResultsForArray(arrCopy);
+    arrCopy = Arrays.copyOf(arr, 1000000);
+    printResultsForArray(arrCopy, printInTimeFormat);
   }
 
-  static void printResultsForArray(int[] arr) {
+  static void printResultsForArray(int[] arr, boolean printInTimeFormat) {
     // pretty print results in a table
     System.out.println(
-        "======================================================================================================================================================================================================================================================================================================================================================================================================================================================================================");
+        "===============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================");
     System.out.printf("%-20s ", "Sorting Algorithm");
     for (int i = 0; i < 20; i++)
       System.out.printf("%-20s ", "Iteration " + (i + 1));
-    System.out.printf("%-20s\n", "Average Time (HH:MM:SS:ms:ns)");
+    System.out.printf("%-20s\n", printInTimeFormat ? "Average Time (HH:MM:SS:ms:ns)" : "Average Time (ns)");
 
-    printResults("Bubble Sort", arr, SortingAlgorithm::bubbleSort);
-    printResults("Selection Sort", arr, SortingAlgorithm::selectionSort);
-    printResults("Insertion Sort", arr, SortingAlgorithm::insertionSort);
-    printResults("Quick Sort", arr, SortingAlgorithm::quickSort);
-    printResults("Arrays.sort", arr, Arrays::sort);
+    printResults("Bubble Sort", arr, SortingAlgorithm::bubbleSort, printInTimeFormat);
+    printResults("Selection Sort", arr, SortingAlgorithm::selectionSort, printInTimeFormat);
+    printResults("Insertion Sort", arr, SortingAlgorithm::insertionSort, printInTimeFormat);
+    printResults("Quick Sort", arr, SortingAlgorithm::quickSort, printInTimeFormat);
+    printResults("Arrays.sort", arr, Arrays::sort, printInTimeFormat);
 
     System.out.println(
-        "======================================================================================================================================================================================================================================================================================================================================================================================================================================================================================");
+        "===============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================");
     System.out.println();
   }
 
-  private static void printResults(String sortName, int[] arr, Consumer<int[]> sortFunction) {
+  private static void printResults(String sortName, int[] arr, Consumer<int[]> sortFunction,
+      boolean printInTimeFormat) {
     System.out.printf("%-20s ", sortName);
-    Duration totalDuration = Duration.ZERO;
+    long totalDuration = 0;
     for (int i = 0; i < 20; i++) {
-      Duration duration = getTimedResults(arr, sortFunction);
-      System.out.printf("%-20s ", formatDuration(duration));
-      totalDuration = totalDuration.plus(duration);
+      long duration = getTimedResults(arr, sortFunction);
+      System.out.printf("%-20s ", printInTimeFormat ? formatDuration(duration) : duration);
+      totalDuration += duration;
     }
-    System.out.printf("%-20s\n", formatDuration(totalDuration.dividedBy(20)));
-    // System.out.printf("%-20s\n", totalDuration.dividedBy(20).toNanos());
+    System.out.printf("%-20s\n",
+        printInTimeFormat ? formatDuration(totalDuration / 20L) : totalDuration / 20L);
   }
 
-  private static Duration getTimedResults(int[] arr, Consumer<int[]> sortFunction) {
+  private static long getTimedResults(int[] arr, Consumer<int[]> sortFunction) {
     long start = System.nanoTime();
     sortFunction.accept(Arrays.copyOf(arr, arr.length));
     long end = System.nanoTime();
-    return Duration.ofNanos(end - start);
+    return end - start;
   }
 
   // format duration to HH:MM:SS:ms:ns
-  private static String formatDuration(Duration duration) {
-    return String.format("%02d:%02d:%02d:%03d:%06d", duration.toHoursPart(), duration.toMinutesPart(),
-        duration.toSecondsPart(), duration.toMillisPart(), duration.toNanosPart() - duration.toMillisPart() * 1000000);
+  private static String formatDuration(long duration) {
+    long hours = duration / 3600000000000L;
+    duration -= hours * 3600000000000L;
+
+    long minutes = duration / 60000000000L;
+    duration -= minutes * 60000000000L;
+
+    long seconds = duration / 1000000000L;
+    duration -= seconds * 1000000000L;
+
+    long milliseconds = duration / 1000000L;
+    duration -= milliseconds * 1000000L;
+
+    long nanoseconds = duration;
+
+    return String.format("%02d:%02d:%02d:%03d:%06d", hours, minutes, seconds, milliseconds, nanoseconds);
   }
 
 }

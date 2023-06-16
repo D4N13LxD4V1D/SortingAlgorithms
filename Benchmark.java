@@ -27,6 +27,14 @@ public class Benchmark {
 
     boolean printInTimeFormat = true; // set to false to print in nanoseconds
 
+    // set according to args
+    if (args.length > 0) {
+      if (args[0].equals("-ns"))
+        printInTimeFormat = false;
+      if (args[0].equals("-hms"))
+        printInTimeFormat = true;
+    }
+
     int[] arrCopy;
     for (int i = 1; i < 35 + 1; i++) {
       System.out.println("Sorting " + i * 100 + " elements");

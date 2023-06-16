@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
-public class NaiveBenchmark {
+public class Benchmark {
 
   public static void main(String[] args) throws FileNotFoundException {
 

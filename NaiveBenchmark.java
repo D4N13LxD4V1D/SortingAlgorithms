@@ -28,48 +28,25 @@ public class NaiveBenchmark {
       arr[i] = list.get(i);
     }
 
-    int[] arr1k = Arrays.copyOf(arr, 1000);
-    int[] arr10k = Arrays.copyOf(arr, 10000);
-    int[] arr50k = Arrays.copyOf(arr, 50000);
-    int[] arr100k = Arrays.copyOf(arr, 100000);
-    int[] arr500k = Arrays.copyOf(arr, 500000);
+    for (int i = 1; i < 35 + 1; i++) {
+      System.out.println("Sorting " + i * 100 + " elements");
+      int[] arrCopy = Arrays.copyOf(arr, i * 250);
+      printResultsForArray(arrCopy);
+    }
 
-    System.out.println("Sorting 1k elements");
-    System.err.println("Sorting 1k elements");
-    printResultsForArray(arr1k);
-
-    System.out.println("Sorting 10k elements");
-    System.err.println("Sorting 10k elements");
-    printResultsForArray(arr10k);
-
-    System.out.println("Sorting 50k elements");
-    System.err.println("Sorting 50k elements");
-    printResultsForArray(arr50k);
-
-    System.out.println("Sorting 100k elements");
-    System.err.println("Sorting 100k elements");
-    printResultsForArray(arr100k);
-
-    System.out.println("Sorting 500k elements");
-    System.err.println("Sorting 500k elements");
-    printResultsForArray(arr500k);
+    System.out.println("Sorting " + 1000000 + " elements");
+    int[] arrCopy = Arrays.copyOf(arr, 1000000);
+    printResultsForArray(arrCopy);
   }
 
   static void printResultsForArray(int[] arr) {
     // pretty print results in a table
     System.out.println(
         "======================================================================================================================================================================================================================================================================================================================================================================================================================================================================================");
-    System.err.println(
-        "======================================================================================================================================================================================================================================================================================================================================================================================================================================================================================");
     System.out.printf("%-20s ", "Sorting Algorithm");
     for (int i = 0; i < 20; i++)
       System.out.printf("%-20s ", "Iteration " + (i + 1));
     System.out.printf("%-20s\n", "Average Time (HH:MM:SS:ms:ns)");
-
-    System.err.printf("%-20s ", "Sorting Algorithm");
-    for (int i = 0; i < 20; i++)
-      System.err.printf("%-20s ", "Iteration " + (i + 1));
-    System.err.printf("%-20s\n", "Average Time (HH:MM:SS:ms:ns)");
 
     printResults("Bubble Sort", arr, SortingAlgorithm::bubbleSort);
     printResults("Selection Sort", arr, SortingAlgorithm::selectionSort);
@@ -79,24 +56,19 @@ public class NaiveBenchmark {
 
     System.out.println(
         "======================================================================================================================================================================================================================================================================================================================================================================================================================================================================================");
-    System.err.println(
-        "======================================================================================================================================================================================================================================================================================================================================================================================================================================================================================");
     System.out.println();
-    System.err.println();
   }
 
   private static void printResults(String sortName, int[] arr, Consumer<int[]> sortFunction) {
     System.out.printf("%-20s ", sortName);
-    System.err.printf("%-20s ", sortName);
     Duration totalDuration = Duration.ZERO;
     for (int i = 0; i < 20; i++) {
       Duration duration = getTimedResults(arr, sortFunction);
       System.out.printf("%-20s ", formatDuration(duration));
-      System.err.printf("%-20s ", formatDuration(duration));
       totalDuration = totalDuration.plus(duration);
     }
     System.out.printf("%-20s\n", formatDuration(totalDuration.dividedBy(20)));
-    System.err.printf("%-20s\n", formatDuration(totalDuration.dividedBy(20)));
+    // System.out.printf("%-20s\n", totalDuration.dividedBy(20).toNanos());
   }
 
   private static Duration getTimedResults(int[] arr, Consumer<int[]> sortFunction) {
